@@ -4,36 +4,49 @@
 #include <limits>
 #include <memory>
 #include <random>
+#include <chrono>
 
-// Constants
+namespace utility
+{
+    // Constants
 
-const double infinity_double = std::numeric_limits<double>::infinity();
-const double pi = 3.1415926535897932385;
+    const double infinity_double = std::numeric_limits<double>::infinity();
+    const double pi = 3.1415926535897932385;
 
-// Utility functions
+    // Utility functions
 
-inline double degrees_to_radians(double degrees) {
-	return degrees * pi / 180.0;
-}
+    inline double degrees_to_radians(double degrees) {
+        return degrees * pi / 180.0;
+    }
 
-/// <summary>
-/// Returns a random double within [0,1).
-/// </summary>
-inline double random_double() {
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    static std::mt19937 generator;
-    return distribution(generator);
-}
+    class fastrng {
+    public:
+        fastrng(uint64_t seed) : seed(seed) {};
+        inline double get() {
+            seed = (214013 * seed + 2531011);
+            return double((seed >> 16) & 0x7FFF) / 0x7FFF;
+        }
+    private:
+        uint64_t seed;
+    };
 
-/// <summary>
-/// Returns a random double within [min,max).
-/// </summary>
-inline double random_double(double min, double max) {
-	return min + (max - min) * random_double();
-}
+    /// <summary>
+    /// Returns a random double within [0,1).
+    /// </summary>
+    inline double random_double() {
+        static fastrng rng(std::chrono::system_clock::now().time_since_epoch().count());
+        return rng.get();
+    }
+    /// <summary>
+    /// Returns a random double within [min,max).
+    /// </summary>
+    inline double random_double(double min, double max) {
+        return min + (max - min) * random_double();
+    }
 
-inline double clamp(double x, double min, double max) {
-    if (x < min) return min;
-    if (x > max) return max;
-    return x;
+    inline double clamp(double x, double min, double max) {
+        if (x < min) return min;
+        if (x > max) return max;
+        return x;
+    }
 }
