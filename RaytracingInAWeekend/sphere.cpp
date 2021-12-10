@@ -1,15 +1,16 @@
 #include "hittable.h"
 #include "sphere.h"
+#include "aabb.h"
 
 sphere::sphere(point3 center, double radius, std::shared_ptr<material> material)
 		: center(center), radius(radius), mat_ptr(material) {};
 
 bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
-	double3 offset_center = r.orig - center;
+	double3 offset_center = r.origin() - center;
 	//Hardcoded maths, find quadratic discriminant of ray hitting circle
 
-	auto a = r.dir.magnitude_squared();
-	auto half_b = linear_algebra::dot(offset_center, r.dir);
+	auto a = r.direction().magnitude_squared();
+	auto half_b = linear_algebra::dot(offset_center, r.direction());
 	auto c = offset_center.magnitude_squared() - radius * radius;
 
 	auto discriminant = half_b * half_b - a * c;
@@ -32,5 +33,12 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 
 	rec.mat_ptr = mat_ptr;
 
+	return true;
+}
+
+bool sphere::get_bounding_box(double time0, double time1, aabb &output_box) const {
+	output_box = aabb(
+		center - double3(radius, radius, radius),
+		center - double3(radius, radius, radius));
 	return true;
 }

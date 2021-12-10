@@ -24,9 +24,9 @@ namespace color_helpers
 	}
 
 	inline rgb color_to_rgb(const color& pixel_color) {
-		return rgb(static_cast<int>(255.999 * pixel_color.x),
-			static_cast<int>(255.999 * pixel_color.y),
-			static_cast<int>(255.999 * pixel_color.z));
+		return rgb(static_cast<int>(255.999 * pixel_color.x()),
+			static_cast<int>(255.999 * pixel_color.y()),
+			static_cast<int>(255.999 * pixel_color.z()));
 	}
 
 	inline void write_color(std::ostream& out, const color& pixel_color) {

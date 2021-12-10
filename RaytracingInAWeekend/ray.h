@@ -9,11 +9,14 @@ class ray {
 			: orig(origin), dir(direction)
 		{}
 
+		inline point3 origin() const { return orig; }
+		inline double3 direction() const { return dir; }
+
 		point3 at(double t) const {
 			return orig + t * dir;
 		}
 
-	public:
+	private:
 		point3 orig;
 		double3 dir;
 };

@@ -22,10 +22,16 @@ namespace utility
     class fastrng {
     public:
         fastrng(uint64_t seed) : seed(seed) {};
-        inline double get() {
-            seed = (214013 * seed + 2531011);
-            return double((seed >> 16) & 0x7FFF) / 0x7FFF;
+
+        inline double get_double() {
+            return double(get_uint64()) / 0x7FFF;
         }
+
+        inline uint64_t get_uint64() {
+            seed = (214013 * seed + 2531011);
+            return (seed >> 16) & 0x7FFF;
+        }
+
     private:
         uint64_t seed;
     };
@@ -35,13 +41,18 @@ namespace utility
     /// </summary>
     inline double random_double() {
         static fastrng rng(std::chrono::system_clock::now().time_since_epoch().count());
-        return rng.get();
+        return rng.get_double();
     }
     /// <summary>
     /// Returns a random double within [min,max).
     /// </summary>
     inline double random_double(double min, double max) {
         return min + (max - min) * random_double();
+    }
+
+    inline uint64_t random_uint64(uint64_t min, uint64_t max) {
+        static fastrng rng(std::chrono::system_clock::now().time_since_epoch().count());
+        return rng.get_uint64();
     }
 
     inline double clamp(double x, double min, double max) {

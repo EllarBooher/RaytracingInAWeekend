@@ -7,46 +7,73 @@
 using std::sqrt;
 
 class double3 {
-	public:
-		double3();
-		double3(double e0, double e1, double e2);
+public:
+	double3() : e{ 0,0,0 } {};
+	double3(double x, double y, double z) : e{ x,y,z } {};
 
-		static double3 random(double min, double max);
+	inline static double3 random(double min, double max) {
+		return double3(utility::random_double(min, max), utility::random_double(min, max), utility::random_double(min, max));
+	}
 
-		double3 operator-() const;
-		double3& operator+=(const double3& f);
-		double3& operator*=(const double t);
-		double3& operator/=(const double t);
+	inline double operator[](uint64_t a) const { return e[a]; }
+	inline double& operator[](uint64_t a) { return e[a]; }
 
-		double magnitude_squared() const;
-		double magnitude() const;
+	inline double3 operator-() const { return double3(-e[0], -e[1], -e[2]); }
 
-	public:
-		double x;
-		double y;
-		double z;
+	inline double3& operator+=(const double3& f) {
+		e[0] += f.e[0];
+		e[1] += f.e[1];
+		e[2] += f.e[2];
+		return *this;
+	}
+
+	inline double3& operator*=(const double t) {
+		e[0] *= t;
+		e[1] *= t;
+		e[2] *= t;
+		return *this;
+	}
+
+	inline double3& operator/=(const double t) {
+		return *this *= 1 / t;
+	}
+
+	inline double x() const { return e[0]; };
+	inline double y() const { return e[1]; };
+	inline double z() const { return e[2]; };
+
+	inline double double3::magnitude() const {
+		return sqrt(magnitude_squared());
+	}
+
+	inline double double3::magnitude_squared() const {
+		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+	}
+
+private:
+	double e[3];
 };
 
 using point3 = double3;
 
 inline std::ostream& operator<<(std::ostream& out, const double3& v) {
-	return out << '(' << v.x << ',' << v.y << ',' << v.z << ')';
+	return out << '(' << v.x() << ',' << v.y() << ',' << v.z() << ')';
 }
 
 inline double3 operator+(const double3 &u, const double3 &v) {
-	return double3(u.x + v.x, u.y + v.y, u.z + v.z);
+	return double3(u.x() + v.x(), u.y() + v.y(), u.z() + v.z());
 }
 
 inline double3 operator-(const double3 &u, const double3 &v) {
-	return double3(u.x - v.x, u.y - v.y, u.z - v.z);
+	return double3(u.x() - v.x(), u.y() - v.y(), u.z() - v.z());
 }
 
 inline double3 operator*(const double3 &u, const double3 &v) {
-	return double3(u.x * v.x, u.y * v.y, u.z * v.z);
+	return double3(u.x() * v.x(), u.y() * v.y(), u.z() * v.z());
 }
 
 inline double3 operator*(const double t, const double3 &v) {
-	return double3(t * v.x, t * v.y, t * v.z);
+	return double3(t * v.x(), t * v.y(), t * v.z());
 }
 
 inline double3 operator/(const double3 &v, const double t) {
@@ -56,12 +83,12 @@ inline double3 operator/(const double3 &v, const double t) {
 namespace linear_algebra
 {
 	inline double dot(const double3& u, const double3& v) {
-		return u.x * v.x + u.y * v.y + u.z * v.z;
+		return u.x() * v.x() + u.y() * v.y() + u.z() * v.z();
 	}
 	inline double3 cross(const double3& u, const double3& v) {
-		return double3(u.y * v.z - u.z * v.y,
-			u.z * v.x - u.x * v.z,
-			u.x * v.y - u.y * v.x);
+		return double3(u.y() * v.z() - u.z() * v.y(),
+			u.z() * v.x() - u.x() * v.z(),
+			u.x() * v.y() - u.y() * v.x());
 	}
 
 	inline double3 normalize(const double3& v) {

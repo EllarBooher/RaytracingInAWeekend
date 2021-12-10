@@ -42,7 +42,7 @@ class metal : public material {
 		virtual bool scatter(
 			const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered
 		) const override {
-			auto scatter_direction = linear_algebra::reflect(r_in.dir, rec.normal);
+			auto scatter_direction = linear_algebra::reflect(r_in.direction(), rec.normal);
 			scattered = ray(rec.point, scatter_direction + fuzz * linear_algebra::random_in_unit_sphere());
 			attenuation = albedo;
 			return (linear_algebra::dot(scatter_direction, rec.normal) > 0);
@@ -65,7 +65,7 @@ class dialectric : public material {
 			attenuation = tint;
 			double refraction_ratio = rec.front_face ? (1.0 / index_of_refraction) : index_of_refraction;
 
-			double3 unit_direction = linear_algebra::normalize(r_in.dir);
+			double3 unit_direction = linear_algebra::normalize(r_in.direction());
 			double cos_theta = linear_algebra::dot(-unit_direction, rec.normal);
 			double sin_theta = sqrt(1.0 - cos_theta * cos_theta);
 

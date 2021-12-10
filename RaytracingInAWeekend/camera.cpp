@@ -31,7 +31,7 @@ camera::camera(
 
 ray camera::get_ray(double s, double t) const {
 	double3 random_from_lens_disk = lens_radius * linear_algebra::random_in_unit_disk();
-	double3 offset = random_from_lens_disk.x * u + random_from_lens_disk.y * v;
+	double3 offset = random_from_lens_disk.x() * u + random_from_lens_disk.y() * v;
 
 	return ray(
 		origin + offset,
