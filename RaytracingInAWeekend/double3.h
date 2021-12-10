@@ -80,6 +80,10 @@ inline double3 operator/(const double3 &v, const double t) {
 	return (1 / t) * v;
 }
 
+inline double3 operator/(const double3& u, const double3& v) {
+	return  double3(u.x() / v.x(), u.y() / v.y(), u.z() / v.z());
+}
+
 namespace linear_algebra
 {
 	inline double dot(const double3& u, const double3& v) {

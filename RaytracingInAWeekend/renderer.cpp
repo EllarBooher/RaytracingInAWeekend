@@ -3,6 +3,7 @@
 #include "color.h"
 #include "ray.h"
 #include "sphere.h"
+#include "hittable.h"
 #include "rtweekend.h"
 #include "bvh.h"
 #include "camera.h"
@@ -10,10 +11,11 @@
 #include <vector>
 #include <iostream>
 #include <array>
+#include <memory>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../STBImage/stb_image_write.h"
 
-std::vector<std::shared_ptr<sphere>> random_scene() {
+std::vector<std::shared_ptr<hittable>> random_scene() {
 	auto material_ground = std::make_shared<lambertian>(color(0.6, 0.6, 0.4));
 	auto material_center = std::make_shared<dialectric>(color(1.0,1.0,1.0),1.5);
 	auto material_left = std::make_shared<metal>(color(0.8, 0.8, 0.8), 0.3);
@@ -21,12 +23,12 @@ std::vector<std::shared_ptr<sphere>> random_scene() {
 	auto material_front = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
 	auto material_orb = std::make_shared<dialectric>(color_helpers::rgb_to_color(67,171,183),1.5);
 
-	std::vector<std::shared_ptr<sphere>> spheres{};
+	std::vector<std::shared_ptr<hittable>> spheres{};
 	spheres.push_back(std::make_shared<sphere>(point3(0, -1000, 0), 1000, material_ground));
 
-	for (int a = -4; a < 4; ++a)
+	for (int a = -11; a < 11; ++a)
 	{
-		for (int b = -4; b < 4; ++b)
+		for (int b = -11; b < 11; ++b)
 		{
 			auto choose_mat = utility::random_double();
 			point3 center(a + 0.9 * utility::random_double(), 0.2, b + 0.9 * utility::random_double());
@@ -79,16 +81,8 @@ color ray_color(const ray& r, const bvh_node &tree, int depth) {
 	double t_min = 0.0001;
 
 	hit_record record;
-	bool hit_anything = false;
-	auto closest_t_so_far = t_max;
 
-	if (tree.hit(r, t_min, closest_t_so_far, record))
-	{
-		hit_anything = true;
-		closest_t_so_far = record.t;
-	}
-
-	if (hit_anything)
+	if (tree.hit(r, t_min, t_max, record))
 	{
 		ray scattered;
 		color attenuation;
@@ -126,8 +120,8 @@ void renderer::render() const {
 
 	const uint16_t bytes_per_RGB_pixel = 3;
 	const uint16_t stride_in_bytes = bytes_per_RGB_pixel * image_width;
-	const uint16_t samples_per_pixel = 100;
-	const uint16_t sqrt_samples_per_pixel = 10;
+	const uint16_t samples_per_pixel = 25;
+	const uint16_t sqrt_samples_per_pixel = 5;
 
 
 	// Render

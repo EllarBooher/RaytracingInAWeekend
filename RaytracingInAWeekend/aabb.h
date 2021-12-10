@@ -6,17 +6,19 @@
 class aabb {
 public:
 	aabb() {}
-	aabb(const point3 &a, const point3 &b) {}
+	aabb(const point3 &min, const point3 &max) : min(min), max(max) {}
 
 	inline point3 minimum() const { return min; };
 	inline point3 maximum() const { return max; };
 
 	inline bool hit(const ray& r, double t_min, double t_max) const {
+		auto ray_origin = r.origin();
+
 		for (int a = 0; a < 3; ++a)
 		{
-			auto inverse_direction = 1.0f / r.direction()[a];
-			auto t0 = (minimum()[a] - r.origin()[a]) * inverse_direction;
-			auto t1 = (maximum()[a] - r.origin()[a]) * inverse_direction;
+			auto inverse_direction = r.direction_inverse()[a];
+			auto t0 = (min[a] - ray_origin[a]) * inverse_direction;
+			auto t1 = (max[a] - ray_origin[a]) * inverse_direction;
 			if (inverse_direction < 0.0f)
 			{
 				std::swap(t0, t1);

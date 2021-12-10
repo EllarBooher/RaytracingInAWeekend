@@ -37,8 +37,9 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 }
 
 bool sphere::get_bounding_box(double time0, double time1, aabb &output_box) const {
-	output_box = aabb(
-		center - double3(radius, radius, radius),
-		center - double3(radius, radius, radius));
+	auto min = center - double3(radius, radius, radius);
+	auto max = center + double3(radius, radius, radius);
+
+	output_box = aabb(min, max);
 	return true;
 }

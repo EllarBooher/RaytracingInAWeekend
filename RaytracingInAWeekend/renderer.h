@@ -14,7 +14,7 @@ public:
 private:
 
 	camera main_camera;
-	std::vector<std::shared_ptr<sphere>> scene;
+	std::vector<std::shared_ptr<hittable>> scene;
 	const uint16_t max_bounce_depth;
 	const double aspect_ratio;
 	bvh_node bvh_tree;
